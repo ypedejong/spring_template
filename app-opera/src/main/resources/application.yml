@@ -32,20 +32,6 @@ management:
     health:
       enabled: "true"
       show-details: "always"
-  #------------------------------- BEGIN: tracing/openTelemetry/Jaeger -------------------------------#
-  observations:
-    enabled: true
-    key-values:
-      my-application: ${spring.application.name}
-  tracing:
-    enabled: true
-    sampling:
-      probability: 1.0 #100%
-  otlp:
-    enabled: true
-    tracing:
-      endpoint: "http://localhost:4318/v1/traces" #Jaeger
-#------------------------------- END: tracing/openTelemetry/Jaeger -------------------------------#
 
 
 ###########################################################################################################
@@ -72,10 +58,18 @@ application:
     request-logger:
       enabled: true;
 
-# swagger-ui custom path
+
+###########################################################################################################
+###########################################################################################################
+###### [ OpenApi 3.1 & Swagger ] (https://springdoc.org/#properties)
+###########################################################################################################
 springdoc:
+  api-docs:
+    enabled: true
+    version: "OPENAPI_3_1"
   show-actuator: true
   use-management-port: true
+  auto-tag-classes: true
 
 ###########################################################################################################
 ###########################################################################################################
@@ -85,3 +79,4 @@ springdoc:
 logging:
   file:
     name: "/tmp/logs/app-opera.log"
+

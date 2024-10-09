@@ -32,20 +32,7 @@ management:
     health:
       enabled: "true"
       show-details: "always"
-  #------------------------------- BEGIN: tracing/openTelemetry/Jaeger -------------------------------#
-  observations:
-    enabled: true
-    key-values:
-      my-application: ${spring.application.name}
-  tracing:
-    enabled: true
-    sampling:
-      probability: 1.0 #100%
-  otlp:
-    enabled: true
-    tracing:
-      endpoint: "http://localhost:4318/v1/traces" #Jaeger
-#------------------------------- END: tracing/openTelemetry/Jaeger -------------------------------#
+
 
 ###########################################################################################################
 ###########################################################################################################
