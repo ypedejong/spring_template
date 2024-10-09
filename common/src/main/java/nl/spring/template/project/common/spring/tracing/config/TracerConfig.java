@@ -4,7 +4,6 @@ import nl.spring.template.project.common.spring.tracing.filter.TracerPropagateFi
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
 /**
  * Servlet filer configuration

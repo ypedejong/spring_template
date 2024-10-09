@@ -13,7 +13,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
  * invoking the /error redirect.
  */
 @ControllerAdvice
-public class ExceptionMapperConfig {
+public class ExceptionMapConfig {
 
     @ExceptionHandler({AccessDeniedException.class})
     public ResponseEntity<Object> handleAccessDeniedException(final AccessDeniedException exception) {

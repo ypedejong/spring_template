@@ -1,6 +1,6 @@
 package nl.spring.template.project.common.spring.logging.config;
 
-import nl.spring.template.project.common.spring.logging.interceptor.RequestLoggerInterceptor;
+import nl.spring.template.project.common.spring.logging.interceptor.RequestLogInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -15,7 +15,7 @@ public abstract class RequestLoggerConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(new RequestLoggerInterceptor()).addPathPatterns(URL_PATTERN_ALL);
+        registry.addInterceptor(new RequestLogInterceptor()).addPathPatterns(URL_PATTERN_ALL);
         //registry.addInterceptor(new AnotherExampleInterceptor()).addPathPatterns("/**").excludePathPatterns("/admin/**");
     }
 }

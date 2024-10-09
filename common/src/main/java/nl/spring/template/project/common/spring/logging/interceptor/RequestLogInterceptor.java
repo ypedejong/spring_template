@@ -10,7 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
 
 @Slf4j
-public class RequestLoggerInterceptor implements HandlerInterceptor {
+public class RequestLogInterceptor implements HandlerInterceptor {
 
     private static final String START_TIME_ATTR_NAME = "startTime";
     private static final String EXECUTION_TIME_ATTR_NAME = "executionTime";

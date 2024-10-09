@@ -19,9 +19,10 @@ import static org.hamcrest.Matchers.containsString;
     "management.server.port=",
     "spring.main.banner-mode=off",
     "spring.main.log-startup-info=off",
-    "application.servlet-filter.tracer.enabled=true"
+    "application.servlet-filter.tracer.enabled=true",
+    "spring-interceptor.request-logger.enabled=true"
 })
-class TracerCorrelationIdTest {
+class TracerTest {
 
     @LocalServerPort
     private int port;
@@ -58,6 +59,7 @@ class TracerCorrelationIdTest {
             .then()
             .assertThat()
             .statusCode(HttpStatus.OK.value())
+            .header("X-Correlation-Id", "mySpecialHeaderValue")
             .contentType(MediaType.TEXT_PLAIN_VALUE)
             .body(containsString("Hello"));
     }
