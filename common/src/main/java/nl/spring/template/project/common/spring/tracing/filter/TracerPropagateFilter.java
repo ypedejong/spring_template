@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class TracerPropagateFilter extends OncePerRequestFilter {
 
-    private static final String CORRELATION_ID = "X-Correlation-Id";
+    public static final String X_CORRELATION_ID = "X-Correlation-Id";
 
     @Override
     protected void doFilterInternal(
@@ -26,14 +26,14 @@ public class TracerPropagateFilter extends OncePerRequestFilter {
         final FilterChain filterChain)
         throws ServletException, IOException {
 
-        var correlationId = request.getHeader(CORRELATION_ID);
+        var correlationId = request.getHeader(X_CORRELATION_ID);
         if (correlationId == null ||
             correlationId.trim().isEmpty() ||
             !isValid(correlationId)) {
 
             response.sendError(
                 HttpServletResponse.SC_BAD_REQUEST,
-                String.format("The '%s' header is required", CORRELATION_ID));
+                String.format("The '%s' header is required", X_CORRELATION_ID));
             return;
         }
 
@@ -44,7 +44,7 @@ public class TracerPropagateFilter extends OncePerRequestFilter {
         MDC.put("cid", correlationId);
 
         // set correlation on the response header.
-        response.setHeader(CORRELATION_ID, correlationId);
+        response.setHeader(X_CORRELATION_ID, correlationId);
 
         try {
             filterChain.doFilter(request, response);

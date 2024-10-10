@@ -1,31 +1,38 @@
 package nl.spring.template.project.app.opera.config;
 
-// configuration for creating new webclient and propagate the correlation-id place holder
-public class WebClientConfig {
+import nl.spring.template.project.common.spring.tracing.client.HttpClientType;
+import nl.spring.template.project.common.spring.tracing.config.TracerClientConfig;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.core5.http.HttpHeaders;
+import org.apache.hc.core5.http.message.BasicHeader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-    // Webclient, Java HttpClient, okhttp,
-    // apache httpClient, blocking, none blocking?
-    // reactive, futures, traditional threads
+import java.util.List;
 
-    //   @Bean
-//    public HttpRequest.Builder HttpClient() {
-//        return HttpRequest.newBuilder().build();
-//    }
-//
-//    @Bean
-//    @Autowired
-//    public HttpRequest.Builder HttpClient(
-//        final HttpClient httpClient,
-//        final MeterRegistry meterRegistry,
-//        final ObservationRegistry observationRegistry) {
-//
-//        return HttpRequest.newBuilder()
-//            .header("X-Our-Header-1", "value1");
-//
-//        return MicrometerHttpClient.instrumentationBuilder(httpClient, meterRegistry)
-//            .observationRegistry(observationRegistry)
-//            .build();
-//    }
+@Configuration
+public class WebClientConfig extends TracerClientConfig {
+
+    public interface Ozon {}
+
+    @Bean
+    @Autowired
+    public HttpClientType<Ozon> ozonClient(final HttpClientBuilder tracerBuilder) {
+
+        //TODO: connectionPool, connectionReuse strategy
+        //TODO: baseUrl / Domain url
+
+        final var defaultHeaders = List.of(
+            new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
+
+        final var client = tracerBuilder
+            .setDefaultHeaders(defaultHeaders)
+            .build();
+
+        return new HttpClientType<>(client);
+
+    }
 
 }
 
