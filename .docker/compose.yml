@@ -1,10 +1,12 @@
 services:
   jaeger:
-    image: image:latest
+    image: harbor-gn2.cicd.s15m.nl/docker-hub/library/eclipse-temurin:17
     ports:
       - "8080:8080" # web
       - "9080:9080" # api
       #- "4317:4317"
+    build:
+      dockerfile: "../app-opera/src/docker/Dockerfile"
     environment:
       - LOG_LEVEL=debug
     networks:
