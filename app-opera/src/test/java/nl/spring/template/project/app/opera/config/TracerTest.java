@@ -63,4 +63,5 @@ class TracerTest {
             .contentType(MediaType.TEXT_PLAIN_VALUE)
             .body(containsString("Hello"));
     }
+
 }

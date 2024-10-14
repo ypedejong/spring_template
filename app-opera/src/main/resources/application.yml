@@ -57,6 +57,9 @@ application:
   spring-interceptor:
     request-logger:
       enabled: true;
+  http-client:
+    ozon:
+      url: "https://tweakers.net"
 
 
 ###########################################################################################################

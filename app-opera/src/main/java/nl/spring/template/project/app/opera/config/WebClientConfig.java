@@ -1,37 +1,60 @@
 package nl.spring.template.project.app.opera.config;
 
-import nl.spring.template.project.common.spring.tracing.client.HttpClientType;
-import nl.spring.template.project.common.spring.tracing.config.TracerClientConfig;
-import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
-import org.apache.hc.core5.http.HttpHeaders;
-import org.apache.hc.core5.http.message.BasicHeader;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import nl.spring.template.project.app.opera.config.properties.ClientOzonProperties;
+import nl.spring.template.project.common.okhttp.HttpClient;
+import nl.spring.template.project.common.spring.tracing.config.TracerClientAbstractConfig;
+import okhttp3.ConnectionPool;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Configuration
-public class WebClientConfig extends TracerClientConfig {
+@EnableConfigurationProperties({ClientOzonProperties.class})
+public class WebClientConfig extends TracerClientAbstractConfig {
 
     public interface Ozon {}
 
+    public static Request.Builder GetOzonRequestBuilder(
+        final ClientOzonProperties clientOzonProperties,
+        final String subPath) {
+
+        return new okhttp3.Request
+            .Builder()
+            .url(clientOzonProperties.getBaseUrl() + subPath);
+    }
+
     @Bean
     @Autowired
-    public HttpClientType<Ozon> ozonClient(final HttpClientBuilder tracerBuilder) {
+    public HttpClient<Ozon> ozonClient(final OkHttpClient.Builder tracerBuilder) {
 
-        //TODO: connectionPool, connectionReuse strategy
-        //TODO: baseUrl / Domain url
-
-        final var defaultHeaders = List.of(
-            new BasicHeader(HttpHeaders.CONTENT_TYPE, "application/json"));
-
+        final var connectionPool = new ConnectionPool(5, 5, TimeUnit.MINUTES);
         final var client = tracerBuilder
-            .setDefaultHeaders(defaultHeaders)
+            .callTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.SECONDS)
+            .writeTimeout(30, TimeUnit.SECONDS)
+            .retryOnConnectionFailure(false)
+            .connectionPool(connectionPool)
             .build();
 
-        return new HttpClientType<>(client);
+        return new HttpClient<>(client);
 
+    }
+
+    @Bean
+    public JsonFactory createJsonJacksonFactory() {
+        return new JsonFactory();
+    }
+
+    @Bean
+    public ObjectMapper createJsonJacksonObjectMapper(final JsonFactory jsonFactory) {
+        return new ObjectMapper(jsonFactory);
     }
 
 }

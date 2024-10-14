@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 /**
  * Servlet filer configuration
  */
-public abstract class TracerServletConfig {
+public abstract class TracerServletAbstractConfig {
 
     private static final String URL_PATTERN_ALL = "/*";
 
