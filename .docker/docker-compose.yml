@@ -1,5 +1,4 @@
 services:
-
   app-template:
     image: "services/app-template:latest"
     restart: "always"
@@ -13,6 +12,11 @@ services:
       - "./../app-template/target/config-local.zip:/mnt/config/config-local.zip"
     networks:
       - "app-services-network"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512M"
 
   app-opera:
     image: "services/app-opera:latest"
@@ -27,6 +31,11 @@ services:
       - "./../app-opera/target/config-local.zip:/mnt/config/config-local.zip"
     networks:
       - "app-services-network"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512M"
 
   app-afwijk:
     image: "services/app-afwijk:latest"
@@ -41,6 +50,88 @@ services:
       - "./../app-afwijk/target/config-local.zip:/mnt/config/config-local.zip"
     networks:
       - "app-services-network"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512M"
+
+  mocks:
+    image: "harbor-gn2.cicd.s15m.nl/koop-lvbb/lvbb-mocks:latest"
+    platform: "linux/amd64"
+    hostname: "koop-lvbb.mocks"
+    container_name: "koop-lvbb.mocks"
+    ports:
+      - "7001:7001"
+    networks:
+      - "app-services-network"
+    environment:
+      - "AUTHORIZATION=ENC(ZWmg1Gp4/q5pRPIkqfJX6D9mCDvR/R2/b+lvkyw+sfk=)"
+      - "ENABLED_OW_VALIDATIE_ZIP=false"
+      - "DEFAULT_STATE_PUP=ACCEPT_EVERYTHING"
+      - "PUP_INBOX_FOLDER=/mnt/pup/proces/inbox"
+      - "PUP_INBOX_PROCESSED_FOLDER=/mnt/pup/proces/inbox/processed"
+      - "PUP_INBOX_BALLENBAK_FOLDER=/mnt/pup/proces/inbox/ballenbak"
+      - "PUP_INBOX_ERROR_FOLDER=/mnt/pup/proces/inbox/error"
+      - "PUP_OUTBOX_FOLDER=/mnt/pup/proces/outbox"
+      - "LOGO_INTERNAL_HOSTNAME=http://koop.mocks:7001"
+      - "TRANSFORMATION_SERVICE_PATH=/mnt/transformatie"
+    volumes:
+      - "./pup_werk:/mnt/pup/werk"
+      - "./pup_proces:/mnt/pup/proces"
+      - "./transformatie_data:/mnt/transformatie"
+      - "./logs/service:/tmp/logs:delegated"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: "512M"
+
+  marklogic:
+    image: "harbor-gn2.cicd.s15m.nl/docker-hub/progressofficial/marklogic-db:10.0-11-ubi"
+    platform: "linux/amd64"
+    ports:
+      - "7997-7999:7997-7999"
+      - "8000-8002:8000-8002"
+      - "8040-8042:8040-8042"
+    hostname: "koop-lvbb.cds"
+    container_name: "koop-lvbb.cds"
+    environment:
+      - "MARKLOGIC_INIT=true"
+      - "MARKLOGIC_ADMIN_USERNAME_FILE=admin"
+      - "MARKLOGIC_ADMIN_PASSWORD_FILE=admin"
+      - "MARKLOGIC_WALLET_PASSWORD_FILE=admin"
+      - "TZ=Europe/Amsterdam"
+    volumes:
+      - "./cds_data:/var/opt/MarkLogic"
+      - "./backups:/data/backups:delegated"
+      - "./logs/cds:/var/opt/MarkLogic/Logs:delegated"
+      - "./debug:/data/debug"
+    networks:
+      - "app-services-network"
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: "16G"
+
+  activemq:
+    image: "harbor-gn2.cicd.s15m.nl/koop-lvbb/image-activemq:latest"
+    platform: "linux/amd64"
+    hostname: "koop-lvbb.queue"
+    container_name: "koop-lvbb.queue"
+    ports:
+      - "8161:8161"
+      - "61616:61616"
+    environment:
+      - "TZ=Europe/Amsterdam"
+    networks:
+      - "app-services-network"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.25"
+          memory: "512M"
 
 networks:
   app-services-network:
